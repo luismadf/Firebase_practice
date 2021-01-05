@@ -4,7 +4,11 @@
   "description": "Blog Geek",
   "main": "app/general.js",
   "scripts": {
-    "test": "no test"
+    "test": "no test",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
   },
   "repository": {
     "type": "git",
@@ -20,7 +24,7 @@
   },
   "homepage": "https://github.com/jggomez/blogvideos-ucc#readme",
   "devDependencies": {
-    "browser-sync": "^2.18.8",
+    "browser-sync": "^2.26.13",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-cache": "^0.4.6",
@@ -30,6 +34,7 @@
     "gulp-minify-css": "^1.2.4",
     "gulp-stylus": "^2.6.0",
     "gulp-useref": "^3.1.2",
-    "run-sequence": "^1.2.2"
+    "run-sequence": "^1.2.2",
+    "graceful-fs": "^4.2.4"
   }
 }

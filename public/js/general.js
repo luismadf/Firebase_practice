@@ -18,25 +18,54 @@ $(() => {
   // TODO: Listening real time
 
   // TODO: Firebase observador del cambio de estado
-  //$('#btnInicioSesion').text('Salir')
-  //$('#avatar').attr('src', user.photoURL)
-  //$('#avatar').attr('src', 'imagenes/usuario_auth.png')
-  //$('#btnInicioSesion').text('Iniciar Sesión')
-  //$('#avatar').attr('src', 'imagenes/usuario.png')
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      $("#btnInicioSesion").text("Salir");
+      if (user.photoURL) {
+        $("#avatar").attr("src", user.photoURL);
+      } else {
+        $("#avatar").attr("src", "imagenes/usuario_auth.png");
+      }
+    } else {
+      $("#btnInicioSesion").text("Iniciar Sesión");
+      $("#avatar").attr("src", "imagenes/usuario.png");
+    }
+  });
 
   // TODO: Evento boton inicio sesion
   $("#btnInicioSesion").click(() => {
-    //$('#avatar').attr('src', 'imagenes/usuario.png')
-    // Materialize.toast(`Error al realizar SignOut => ${error}`, 4000)
-
+    const user = firebase.auth().currentUser;
+    if (user) {
+      $("#btnInicioSesion").text("Iniciar Sesión");
+      return firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          $("#avatar").attr("src", "imagenes/usuario.png");
+          Materialize.toast(`SignOut exitoso!`, 4000);
+        })
+        .catch((err) => {
+          console.error(err);
+          Materialize.toast(`Error al realizar SignOut => ${err}`, 4000);
+        });
+    }
     $("#emailSesion").val("");
     $("#passwordSesion").val("");
     $("#modalSesion").modal("open");
   });
 
   $("#avatar").click(() => {
-    //$('#avatar').attr('src', 'imagenes/usuario.png')
-    //Materialize.toast(`SignOut correcto`, 4000)
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        $("#avatar").attr("src", "imagenes/usuario.png");
+        Materialize.toast(`SignOut correcto`, 4000);
+      })
+      .catch((err) => {
+        Materialize.toast(`Erro al realizar el SignOut ${err}`, 4000);
+      });
   });
 
   $("#btnTodoPost").click(() => {

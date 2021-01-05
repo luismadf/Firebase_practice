@@ -1,22 +1,55 @@
 class Post {
-  constructor () {
-      // TODO inicializar firestore y settings
-
+  constructor() {
+    // TODO inicializar firestore y settings
+    this.db = firebase.firestore();
+    const settings = { timestampsInSnapshots: true };
+    this.db.settings(settings);
   }
 
-  crearPost (uid, emailUser, titulo, descripcion, imagenLink, videoLink) {
-    
+  crearPost(uid, emailUser, titulo, descripcion, imagenLink, videoLink) {
+    return this.db
+      .collection("posts")
+      .add({
+        uid: uid,
+        autor: emailUser,
+        title: titulo,
+        descripcion: descripcion,
+        imageLink: imagenLink,
+        videoLink: videoLink,
+        fecha: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then((res) => {
+        console.log(`Id del post => ${res.id}`);
+      })
+      .catch((err) => {
+        console.error(`Error creando el post => ${err}`);
+      });
   }
 
-  consultarTodosPost () {
-    
+  consultarTodosPost() {
+    this.db.collection("posts").onSnapshot((querySnapshot) => {
+      $("#posts").empty();
+      if (querySnapshot.empty()) {
+        $("#posts").append(this.obtenerTemplatePostVacio());
+      } else {
+        querySnapshot.forEach((post) => {
+          let postHtml = this.obtenerPostTemplate(
+            post.data().autor,
+            post.data().titulo,
+            post.data().descripcion,
+            post.data().videoLink,
+            post.data().imagenLink,
+            Utilidad.obtenerFecha(post.data().fecha.toDate())
+          );
+          $("#posts").append(postHtml);
+        });
+      }
+    });
   }
 
-  consultarPostxUsuario (emailUser) {
-    
-  }
+  consultarPostxUsuario(emailUser) {}
 
-  obtenerTemplatePostVacio () {
+  obtenerTemplatePostVacio() {
     return `<article class="post">
       <div class="post-titulo">
           <h5>Crea el primer Post a la comunidad</h5>
@@ -41,10 +74,10 @@ class Post {
       </div>
       <div class="post-footer container">         
       </div>
-  </article>`
+  </article>`;
   }
 
-  obtenerPostTemplate (
+  obtenerPostTemplate(
     autor,
     titulo,
     descripcion,
@@ -84,7 +117,7 @@ class Post {
                     </div>        
                 </div>
             </div>
-        </article>`
+        </article>`;
     }
 
     return `<article class="post">
@@ -119,6 +152,6 @@ class Post {
                         </div>        
                     </div>
                 </div>
-            </article>`
+            </article>`;
   }
 }
