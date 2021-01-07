@@ -38,7 +38,7 @@ class Post {
             post.data().title,
             post.data().descripcion,
             post.data().videoLink,
-            post.data().imagenLink,
+            post.data().imageLink,
             Utilidad.obtenerFecha(post.data().fecha.toDate())
           );
           $("#posts").append(postHtml);
@@ -69,6 +69,37 @@ class Post {
           });
         }
       });
+  }
+
+  subirImagenPost(file, uid) {
+    const refStorage = firebase.storage().ref(`imgsPosts/${uid}/${file.name}`);
+    const task = refStorage.put(file);
+
+    task.on(
+      "state_changed",
+      (snapshot) => {
+        const porcentaje =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        $(".determinate").attr("style", `width: ${porcentaje}%`);
+      },
+      (err) => {
+        Materialize.toast(
+          `Error al subir el archivo: ${err.message} !! `,
+          4000
+        );
+      },
+      () => {
+        task.snapshot.ref
+          .getDownloadURL()
+          .then((url) => {
+            console.log(url);
+            sessionStorage.setItem("imgNewPost", url);
+          })
+          .catch((err) => {
+            Materialize.toast(`Error obteniendo url ${err.message} !! `, 4000);
+          });
+      }
+    );
   }
 
   obtenerTemplatePostVacio() {

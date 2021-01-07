@@ -56,7 +56,9 @@ $(() => {
     // Materialize.toast(`Para crear el post debes estar autenticado`, 4000)
 
     const file = e.target.files[0];
-
+    const user = firebase.auth().currentUser;
+    const post = new Post();
+    post.subirImagenPost(file, user.uid);
     // TODO: Referencia al storage
   });
 });
